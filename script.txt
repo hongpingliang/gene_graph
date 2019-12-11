@@ -1,0 +1,53 @@
+USING PERIODIC COMMIT 5000
+LOAD CSV from "file:///genes.csv" AS line 
+MERGE (gene:Gene {approved_symbol: line[0], approved_name: line[1], status: line[2], previous_symbol: line[3], previous_name: line[4], synonymes: line[5], chromosome: line[6], accession_number: line[7], omim_id: line[8], refseq_id: line[9], ensimble_id: line[10], uniprot_id: line[11], hgnc_id: line[12], chromosome_num: line[13], chromosome_arm: line[14], chromosome_region: line[15]});
+
+LOAD CSV from "file:///chromosome_arm.csv" AS line 
+MERGE (chromosome:Chromosome {chromosome_num: line[0]});
+
+LOAD CSV from "file:///chromosome_arm.csv" AS line 
+MERGE (chromosomearm:ChromosomeArm {chromosome_arm: line[1]});
+
+LOAD CSV from "file:///arm_region.csv" AS line 
+MERGE (chromosomeregion:ChromosomeRegion {chromosome_region: line[1]});
+
+LOAD CSV from "file:///chromosome_arm.csv" AS line
+MATCH (chromosome:Chromosome {chromosome_num: line[0]}),(chromosomearm:ChromosomeArm {chromosome_arm: line[1]})
+CREATE (chromosome)-[:CHROMOSOME_ARM {cnt:line[2]}]->(chromosomearm);
+
+LOAD CSV from "file:///arm_region.csv" AS line
+MATCH (chromosomearm:ChromosomeArm {chromosome_arm: line[0]}),(chromosomeregion:ChromosomeRegion {chromosome_region: line[1]})
+CREATE (chromosomearm)-[:ARM_REGION {cnt:line[2]}]->(chromosomeregion);
+
+USING PERIODIC COMMIT 5000
+LOAD CSV from "file:///genes.csv" AS line
+MATCH (chromosomeregion:ChromosomeRegion {chromosome_region: line[15]}),(gene:Gene {approved_symbol: line[0]})
+CREATE (chromosomeregion)-[:REGION_GENE {apponame:line[1]}]->(gene);
+
+
+
+MATCH (n) RETURN (n)
+
+MATCH (n) DETACH DELETE n;
+MATCH (n)-[r:TAKE]->() DELETE r;
+
+
+
+
+
+
+
+
+
+
+
+
+
+LOAD CSV from "file:///ca.csv" AS line
+MATCH (chromosome:Chromosome {name: line[0]}),(chromosomearm:ChromosomeArm {name: line[1]})
+CREATE (chromosome)-[:HAS {cnt:line[2]}]->(chromosomearm)
+
+LOAD CSV from "file:///am.csv" AS line
+MATCH (chromosomearm:ChromosomeArm {name: line[0]}),(chromosomemajor:ChromosomeMajor {name: line[1]})
+CREATE (chromosomearm)-[:ARMHAS {cnt:line[2]}]->(chromosomemajor)
+
