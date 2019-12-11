@@ -9,6 +9,11 @@ The article descrie the steps to load over 40,000 human genes into the Neo4j gra
 
 
 
+![alt text](https://github.com/hongpingliang/gene_graph/blob/master/img/sample4.png?raw=true "Gene Graph")
+
+
+
+
 
 
 
